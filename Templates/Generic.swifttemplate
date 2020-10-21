@@ -1,0 +1,20 @@
+<%
+func generic(_ type: Type) -> (String) -> String {
+  let generics = (type.annotations["generic"] as? String).flatMap { !$0.isEmpty && $0.contains("_") ? $0 : nil }
+  return { generic in
+    if generic.isEmpty {
+      if let generics = generics {
+        return "<\(generics.replacingOccurrences(of: ", _, ", with: ", ").replacingOccurrences(of: ", _", with: "").replacingOccurrences(of: "_, ", with: ""))>"
+      } else {
+        return ""
+      }
+    } else {
+      if let generics = generics {
+        return "<\(generics.replacingOccurrences(of: "_", with: generic))>"
+      } else {
+        return "<\(generic)>"
+      }
+    }
+  }
+}
+%>

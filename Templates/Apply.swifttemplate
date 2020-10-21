@@ -1,0 +1,29 @@
+<%- include("Generic.swifttemplate") %>
+<%
+  for type in types.all {
+    guard type.annotations["apply"] != nil else { continue }
+    
+    let g = generic(type)    
+-%>
+// sourcery:inline:<%= type.name %>.Apply
+public func <*> <%= g("A, B") %>(mf: <%= type.name %><%= g("(A) -> B") %>, m: <%= type.name %><%= g("A") %>) -> <%= type.name %><%= g("B") %> {
+  apply(mf)(m)
+}
+
+public func applyFirst<%= g("A, B") %>(_ m: <%= type.name %><%= g("A") %>) -> (<%= type.name %><%= g("B") %>) -> <%= type.name %><%= g("A") %> {
+  { ma in constant <!> m <*> ma }
+}
+
+public func <* <%= g("A, B") %>(m: <%= type.name %><%= g("A") %>, ma: <%= type.name %><%= g("B") %>) -> <%= type.name %><%= g("A") %> {
+  applyFirst(m)(ma)
+}
+
+public func appllySecond<%= g("A, B") %>(_ ma: <%= type.name %><%= g("A") %>) -> (<%= type.name %><%= g("B") %>) -> <%= type.name %><%= g("B") %> {
+  { mb in identity <! ma <*> mb }
+}
+
+public func *> <%= g("A, B") %>(ea: <%= type.name %><%= g("A") %>, eb: <%= type.name %><%= g("B") %>) -> <%= type.name %><%= g("B") %> {
+  appllySecond(ea)(eb)
+}
+// sourcery:end
+<% } -%>

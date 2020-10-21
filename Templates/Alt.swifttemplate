@@ -1,0 +1,13 @@
+<%- include("Generic.swifttemplate") %>
+<%
+  for type in types.all {
+    guard type.annotations["alt"] != nil else { continue }
+    
+    let g = generic(type)
+-%>
+// sourcery:inline:<%= type.name %>.Alt
+public func <|> <%= g("A") %>(left: <%= type.name %><%= g("A") %>, right: <%= type.name %><%= g("A") %>) -> <%= type.name %><%= g("A") %> {
+  alt(left)(right)
+}
+// sourcery:end
+<% } -%>

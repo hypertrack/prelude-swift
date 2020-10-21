@@ -1,0 +1,17 @@
+<%- include("Generic.swifttemplate") %>
+<%
+  for type in types.all {
+    guard type.annotations["monad"] != nil else { continue }
+    
+    let g = generic(type)
+-%>
+// sourcery:inline:<%= type.name %>.Monad
+public func whenM<%= g("") %>(_ mb: <%= type.name %><%= g("Bool") %>) -> (<%= type.name %><%= g("Unit") %>) ->  <%= type.name %><%= g("Unit") %> {
+  { m in mb >>= { b in when(b)(m) } }
+}
+
+public func unlessM<%= g("") %>(_ mb: <%= type.name %><%= g("Bool") %>) -> (<%= type.name %><%= g("Unit") %>) ->  <%= type.name %><%= g("Unit") %> {
+  { m in mb >>= { b in unless(b)(m) } }
+}
+// sourcery:end
+<% } -%>

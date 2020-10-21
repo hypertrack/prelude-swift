@@ -1,0 +1,17 @@
+<%- include("Generic.swifttemplate") %>
+<%
+  for type in types.all {
+    guard type.annotations["applicative"] != nil else { continue }
+    
+    let g = generic(type)    
+-%>
+// sourcery:inline:<%= type.name %>.Applicative
+public func when<%= g("") %>(_ when: Bool) -> (<%= type.name %><%= g("Unit") %>) -> <%= type.name %><%= g("Unit") %> {
+  { e in when ? e : pure(unit) }
+}
+
+public func unless<%= g("") %>(_ unless: Bool) -> (<%= type.name %><%= g("Unit") %>) -> <%= type.name %><%= g("Unit") %> {
+  { e in unless ? pure(unit) : e }
+}
+// sourcery:end
+<% } -%>

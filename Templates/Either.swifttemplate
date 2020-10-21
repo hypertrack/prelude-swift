@@ -1,0 +1,13 @@
+<%- include("Generic.swifttemplate") %>
+<%
+  for type in types.all {
+    guard type.annotations["either"] != nil else { continue }
+    
+    let g = generic(type)
+-%>
+// sourcery:inline:<%= type.name %>.Either
+public func choose<%= g("A, B") %>(_ ma: <%= type.name %><%= g("A") %>) -> (<%= type.name %><%= g("B") %>) -> <%= type.name %><%= g("Either<A, B>") %> {
+  { mb in Either.left <!> ma <|> Either.right <!> mb }
+}
+// sourcery:end
+<% } -%>

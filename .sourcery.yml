@@ -1,0 +1,5 @@
+sources:
+    - Sources/Prelude
+templates:
+    - Templates
+output: Sources/Prelude

@@ -1,0 +1,49 @@
+<%- include("Generic.swifttemplate") %>
+<%
+  for type in types.all {
+    guard type.annotations["functor"] != nil else { continue }
+    
+    let g = generic(type)    
+-%>
+// sourcery:inline:<%= type.name %>.Functor
+public func <!> <%= g("A, B") %>(f: @escaping (A) -> B, m: <%= type.name %><%= g("A") %>) -> <%= type.name %><%= g("B") %> {
+    map(f)(m)
+}
+
+public func mapFlipped<%= g("A, B") %>(_ m: <%= type.name %><%= g("A") %>) -> (@escaping (A) -> B) -> <%= type.name %><%= g("B") %> {
+  { f in map(f)(m) }
+}
+
+public func <¡> <%= g("A, B") %>(m: <%= type.name %><%= g("A") %>, f: @escaping (A) -> B) -> <%= type.name %><%= g("B") %> {
+  mapFlipped(m)(f)
+}
+
+public func replaceWithLeft<%= g("A, B") %>(_ b: B) -> (<%= type.name %><%= g("A") %>) -> <%= type.name %><%= g("B") %> {
+  b |> constant >>> map
+}
+
+public func <! <%= g("A, B") %>(a: B, m: <%= type.name %><%= g("A") %>) -> <%= type.name %><%= g("B") %> {
+  replaceWithLeft(a)(m)
+}
+
+public func replaceWithRight<%= g("A, B") %>(_ m: <%= type.name %><%= g("A") %>) -> (B) -> <%= type.name %><%= g("B") %> {
+  { a in constant(a) <!> m }
+}
+
+public func !> <%= g("A, B") %>(m: <%= type.name %><%= g("A") %>, a: B) -> <%= type.name %><%= g("B") %> {
+  replaceWithRight(m)(a)
+}
+
+public func replaceWithVoid<%= g("A") %>(_ m: <%= type.name %><%= g("A") %>) -> <%= type.name %><%= g("Void") %> {
+  () <! m
+}
+
+public func flip<%= g("A, B") %>(_ ef: <%= type.name %><%= g("(A) -> B") %>) -> (A) -> <%= type.name %><%= g("B") %> {
+  { r in map { $0(r) } <| ef }
+}
+
+public func >!< <%= g("A, B") %>(ef: <%= type.name %><%= g("(A) -> B") %>, r: A) -> <%= type.name %><%= g("B") %> {
+  flip(ef)(r)
+}
+// sourcery:end
+<% } -%>
