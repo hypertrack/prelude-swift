@@ -1,4 +1,4 @@
-struct PrismM<S, T, A, B> {
+public struct PrismM<S, T, A, B> {
   private let _extract: (S) -> A?
   private let _embed: (B) -> T
   
@@ -11,14 +11,14 @@ struct PrismM<S, T, A, B> {
   func embed(_ value: B) -> T { _embed(value) }
 }
 
-typealias Prism<Root, Value> = PrismM<Root, Root, Value, Value>
+public typealias Prism<Root, Value> = PrismM<Root, Root, Value, Value>
 
-extension PrismM where S == T, A == B {
+public extension PrismM where S == T, A == B {
   typealias Root = S
   typealias Value = A
 }
 
-extension PrismM {
+public extension PrismM {
   func tryModify(_ f: @escaping (A) -> B) -> (S) -> T? {
     extract >>> map(f >>> embed)
   }
@@ -33,66 +33,66 @@ extension PrismM {
 
 // MARK: - Operators
 
-func *^? <S, T, A, B>(
+public func *^? <S, T, A, B>(
   root: S,
   prism: PrismM<S, T, A, B>
 ) -> A? {
   prism.extract(from: root)
 }
 
-func *< <S, T, A, B>(
+public func *< <S, T, A, B>(
   prism: PrismM<S, T, A, B>,
   value: B
 ) -> (S) -> T {
   prism.embed(value) |> constant
 }
 
-func *~? <S, T, A, B>(
+public func *~? <S, T, A, B>(
   prism: PrismM<S, T, A, B>,
   f: @escaping (A) -> B
 ) -> (S) -> T? {
   prism.tryModify(f)
 }
 
-func ** <S, T, A, B, C, D> (
+public func ** <S, T, A, B, C, D> (
   left: PrismM<S, T, A, B>,
   right: PrismM<A, B, C, D>
 ) -> PrismM<S, T, C, D> {
   left.appending(right)
 }
 
-prefix func / <Root, Value>(
+public prefix func / <Root, Value>(
   embed: @escaping (Value) -> Root
 ) -> Prism<Root, Value> {
   .case(embed)
 }
 
-prefix func / <Root>(
+public prefix func / <Root>(
   root: Root
 ) -> Prism<Root, Void> {
   .case(root)
 }
 
-prefix func / <Root>(
+public prefix func / <Root>(
   type: Root.Type
 ) -> Prism<Root, Root> {
   .self
 }
 
-prefix func / <Root, Value>(
+public prefix func / <Root, Value>(
   case: @escaping (Value) -> Root
 ) -> (Root) -> Value? {
   extract(`case`)
 }
 
-prefix func / <Root>(
+public prefix func / <Root>(
   root: Root
 ) -> (Root) -> Void? {
   (/root).extract
 }
 
 // MARK: - Types
-extension Optional {
+public extension Optional {
   static var prism: Prism<Optional, Wrapped> {
     Prism<Optional, Wrapped>(
       extract: identity,
@@ -101,7 +101,7 @@ extension Optional {
   }
 }
 
-extension Prism where S == T, A == B, Root == Value {
+public extension Prism where S == T, A == B, Root == Value {
   static var `self`: Prism<Root, Value> {
     Prism(
       extract: Optional.some,
@@ -110,7 +110,7 @@ extension Prism where S == T, A == B, Root == Value {
   }
 }
 
-extension Prism where S == T, A == B, Root == Void {
+public extension Prism where S == T, A == B, Root == Void {
   static func const(value: Value) -> Prism<Root, Value> {
     Prism(
       extract: { .some(value) },
@@ -119,7 +119,7 @@ extension Prism where S == T, A == B, Root == Void {
   }
 }
 
-extension Prism where S == T, A == B, Value == Never {
+public extension Prism where S == T, A == B, Value == Never {
   static var never: Prism<Root, Value> {
     Prism(
       extract: constant(nil),
@@ -128,7 +128,7 @@ extension Prism where S == T, A == B, Value == Never {
   }
 }
 
-extension Prism where S == T, A == B, Value: RawRepresentable, Root == Value.RawValue {
+public extension Prism where S == T, A == B, Value: RawRepresentable, Root == Value.RawValue {
   static var rawValue: Prism<Root, Value> {
     .init(
       extract: Value.init(rawValue:),
@@ -137,7 +137,7 @@ extension Prism where S == T, A == B, Value: RawRepresentable, Root == Value.Raw
   }
 }
 
-extension Prism where S == T, A == B, Value: LosslessStringConvertible, Root == String {
+public extension Prism where S == T, A == B, Value: LosslessStringConvertible, Root == String {
   static var description: Prism<Root, Value> {
     .init(
       extract: Value.init,

@@ -1,28 +1,28 @@
 // MARK: - Application
 
-func apply<A, B>(_ f: @escaping (A) -> B) -> (A) -> B { { a in f(a) } }
+public func apply<A, B>(_ f: @escaping (A) -> B) -> (A) -> B { { a in f(a) } }
 
-func <| <A, B> (f: @escaping (A) -> B, a: A) -> B { apply(f)(a) }
+public func <| <A, B> (f: @escaping (A) -> B, a: A) -> B { apply(f)(a) }
 
-func applyFlipped<A, B>(_ a: A) -> ((A) -> B) -> B { { f in f(a) } }
+public func applyFlipped<A, B>(_ a: A) -> ((A) -> B) -> B { { f in f(a) } }
 
-func |> <A, B> (a: A, f: (A) -> B) -> B { applyFlipped(a)(f) }
+public func |> <A, B> (a: A, f: (A) -> B) -> B { applyFlipped(a)(f) }
 
 // MARK: inout
 
-func |> <A>(a: inout A, f: (inout A) -> Void) -> Void { f(&a) }
+public func |> <A>(a: inout A, f: (inout A) -> Void) -> Void { f(&a) }
 
 
 // MARK: - Composition
 
-func >>> <A, B, C>(
+public func >>> <A, B, C>(
   _ a2b: @escaping (A) -> B,
   _ b2c: @escaping (B) -> C
 ) -> (A) -> C {
   { a in b2c(a2b(a)) }
 }
 
-func <<< <A, B, C>(
+public func <<< <A, B, C>(
   _ b2c: @escaping (B) -> C,
   _ a2b: @escaping (A) -> B
 ) -> (A) -> C {
@@ -31,17 +31,17 @@ func <<< <A, B, C>(
 
 // MARK: - Semigroup
 
-func <> <A>(lhs: @escaping (A) -> A, rhs: @escaping (A) -> A) -> (A) -> A { lhs >>> rhs }
+public func <> <A>(lhs: @escaping (A) -> A, rhs: @escaping (A) -> A) -> (A) -> A { lhs >>> rhs }
 
 // MARK: - Useful Functions
 
-func identity<A>(_ a: A) -> A { a }
+public func identity<A>(_ a: A) -> A { a }
 
-func absurd<A>(_ never: Never) -> A {}
+public func absurd<A>(_ never: Never) -> A {}
 
-func constant<A, B>(_ a: A) -> (B) -> A { { _ in a } }
+public func constant<A, B>(_ a: A) -> (B) -> A { { _ in a } }
 
-func flip<A, B, C>(_ f: @escaping (A) -> (B) -> C) -> (B) -> (A) -> C {
+public func flip<A, B, C>(_ f: @escaping (A) -> (B) -> C) -> (B) -> (A) -> C {
   { b in
     { a in
       f(a)(b)
@@ -49,20 +49,20 @@ func flip<A, B, C>(_ f: @escaping (A) -> (B) -> C) -> (B) -> (A) -> C {
   }
 }
 
-func >!< <A, B, C>(f: @escaping (A) -> (B) -> C, b: B) -> (A) -> C {
+public func >!< <A, B, C>(f: @escaping (A) -> (B) -> C, b: B) -> (A) -> C {
   flip(f)(b)
 }
 
-func join<A, B>(f: @escaping (A) -> (A) -> B) -> (A) -> B {
+public func join<A, B>(f: @escaping (A) -> (A) -> B) -> (A) -> B {
   { a in f(a)(a) }
 }
 
-func zurry<A>(_ f: () -> A) -> A { f() }
+public func zurry<A>(_ f: () -> A) -> A { f() }
 
-func unzurry<A>(_ a: A) -> () -> A { { a } }
+public func unzurry<A>(_ a: A) -> () -> A { { a } }
 
 // MARK: Curry
-func curry<A, B, C>(_ function: @escaping (A, B) -> C)
+public func curry<A, B, C>(_ function: @escaping (A, B) -> C)
   -> (A)
   -> (B)
   -> C {
@@ -73,7 +73,7 @@ func curry<A, B, C>(_ function: @escaping (A, B) -> C)
     }
 }
 
-func curry<A, B, C, D>(_ function: @escaping (A, B, C) -> D)
+public func curry<A, B, C, D>(_ function: @escaping (A, B, C) -> D)
   -> (A)
   -> (B)
   -> (C)
@@ -87,7 +87,7 @@ func curry<A, B, C, D>(_ function: @escaping (A, B, C) -> D)
     }
 }
 
-func curry<A, B, C, D, E>(_ function: @escaping (A, B, C, D) -> E)
+public func curry<A, B, C, D, E>(_ function: @escaping (A, B, C, D) -> E)
   -> (A)
   -> (B)
   -> (C)
@@ -104,7 +104,7 @@ func curry<A, B, C, D, E>(_ function: @escaping (A, B, C, D) -> E)
     }
 }
 
-func curry<A, B, C, D, E, F>(_ function: @escaping (A, B, C, D, E) -> F)
+public func curry<A, B, C, D, E, F>(_ function: @escaping (A, B, C, D, E) -> F)
   -> (A)
   -> (B)
   -> (C)
@@ -124,7 +124,7 @@ func curry<A, B, C, D, E, F>(_ function: @escaping (A, B, C, D, E) -> F)
     }
 }
 
-func curry<A, B, C, D, E, F, G>(_ function: @escaping (A, B, C, D, E, F) -> G)
+public func curry<A, B, C, D, E, F, G>(_ function: @escaping (A, B, C, D, E, F) -> G)
   -> (A)
   -> (B)
   -> (C)
@@ -147,7 +147,7 @@ func curry<A, B, C, D, E, F, G>(_ function: @escaping (A, B, C, D, E, F) -> G)
     }
 }
 
-func curry<A, B, C, D, E, F, G, H>(_ function: @escaping (A, B, C, D, E, F, G) -> H)
+public func curry<A, B, C, D, E, F, G, H>(_ function: @escaping (A, B, C, D, E, F, G) -> H)
   -> (A)
   -> (B)
   -> (C)
@@ -173,7 +173,7 @@ func curry<A, B, C, D, E, F, G, H>(_ function: @escaping (A, B, C, D, E, F, G) -
     }
 }
 
-func curry<A, B, C, D, E, F, G, H, I>(_ function: @escaping (A, B, C, D, E, F, G, H) -> I)
+public func curry<A, B, C, D, E, F, G, H, I>(_ function: @escaping (A, B, C, D, E, F, G, H) -> I)
   -> (A)
   -> (B)
   -> (C)
@@ -202,7 +202,7 @@ func curry<A, B, C, D, E, F, G, H, I>(_ function: @escaping (A, B, C, D, E, F, G
     }
 }
 
-func curry<A, B, C, D, E, F, G, H, I, J>(_ function: @escaping (A, B, C, D, E, F, G, H, I) -> J)
+public func curry<A, B, C, D, E, F, G, H, I, J>(_ function: @escaping (A, B, C, D, E, F, G, H, I) -> J)
   -> (A)
   -> (B)
   -> (C)
@@ -234,7 +234,7 @@ func curry<A, B, C, D, E, F, G, H, I, J>(_ function: @escaping (A, B, C, D, E, F
     }
 }
 
-func curry<A, B, C, D, E, F, G, H, I, J, K>(_ function: @escaping (A, B, C, D, E, F, G, H, I, J) -> K)
+public func curry<A, B, C, D, E, F, G, H, I, J, K>(_ function: @escaping (A, B, C, D, E, F, G, H, I, J) -> K)
   -> (A)
   -> (B)
   -> (C)
@@ -269,7 +269,7 @@ func curry<A, B, C, D, E, F, G, H, I, J, K>(_ function: @escaping (A, B, C, D, E
     }
 }
 
-func curry<A, B, C, D, E, F, G, H, I, J, K, L>(
+public func curry<A, B, C, D, E, F, G, H, I, J, K, L>(
   _ function: @escaping (A, B, C, D, E, F, G, H, I, J, K) -> L)
   -> (A)
   -> (B)
@@ -308,7 +308,7 @@ func curry<A, B, C, D, E, F, G, H, I, J, K, L>(
     }
 }
 
-func curry<A, B, C, D, E, F, G, H, I, J, K, L, M>(
+public func curry<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   _ function: @escaping (A, B, C, D, E, F, G, H, I, J, K, L) -> M)
   -> (A)
   -> (B)
@@ -350,7 +350,7 @@ func curry<A, B, C, D, E, F, G, H, I, J, K, L, M>(
     }
 }
 
-func uncurry<A, B, C>(_ f: @escaping (A) -> (B) -> C) -> (A, B) -> C {
+public func uncurry<A, B, C>(_ f: @escaping (A) -> (B) -> C) -> (A, B) -> C {
   { a, b in
     f(a)(b)
   }

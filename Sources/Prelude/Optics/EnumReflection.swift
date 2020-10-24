@@ -22,7 +22,7 @@
 
 import func Foundation.memcmp
 
-extension Prism where S == T, A == B {
+public extension Prism where S == T, A == B {
   static func `case`(_ embed: @escaping (Value) -> Root) -> Prism<Root, Value> {
     let extract: ((Value) -> Root, Root) -> Value? = extract(case:from:)
     return self.init(
@@ -32,7 +32,7 @@ extension Prism where S == T, A == B {
   }
 }
 
-extension Prism where S == T, A == B, Value == Void {
+public extension Prism where S == T, A == B, Value == Void {
   static func `case`(_ value: Root) -> Prism<Root, Value> {
     Prism(
       extract: { "\($0)" == "\(value)" ? () : nil },
@@ -41,7 +41,7 @@ extension Prism where S == T, A == B, Value == Void {
   }
 }
 
-func extract<Root, Value>(
+public func extract<Root, Value>(
   case embed: (Value) -> Root,
   from root: Root
 ) -> Value? {
@@ -77,7 +77,7 @@ func extract<Root, Value>(
   return nil
 }
 
-func extract<Root, Value>(
+public func extract<Root, Value>(
   _ case: @escaping (Value) -> Root
 ) -> (Root) -> (Value?) {
   { root in

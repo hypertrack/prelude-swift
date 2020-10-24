@@ -1,8 +1,8 @@
-struct AffineM<S, T, A, B> {
+public struct AffineM<S, T, A, B> {
   private let _extract: (S) -> A?
   private let _inject: (B) -> (S) -> T?
   
-  init(
+  public init(
     extract: @escaping (S) -> A?,
     inject: @escaping (B) -> (S) -> T?
   ) {
@@ -10,18 +10,18 @@ struct AffineM<S, T, A, B> {
     self._inject = inject
   }
   
-  func extract(from root: S) -> A? { _extract(root) }
-  func inject(_ value: B) -> (S) -> T? { _inject(value) }
+  public func extract(from root: S) -> A? { _extract(root) }
+  public func inject(_ value: B) -> (S) -> T? { _inject(value) }
 }
 
-typealias Affine<Root, Value> = AffineM<Root, Root, Value, Value>
+public typealias Affine<Root, Value> = AffineM<Root, Root, Value, Value>
 
-extension AffineM where S == T, A == B {
+public extension AffineM where S == T, A == B {
   typealias Root = S
   typealias Value = A
 }
 
-extension AffineM {
+public extension AffineM {
   func tryModify(_ f: @escaping (A) -> B) -> (S) -> T? {
     { s in extract(from: s).map(f).flatMap { b in inject(b)(s) } }
   }
@@ -38,7 +38,7 @@ extension AffineM {
   }
 }
 
-extension LensM {
+public extension LensM {
   func toAffine() -> AffineM<S, T, A, B> {
     AffineM<S, T, A, B>(extract: get, inject: set)
   }
@@ -52,7 +52,7 @@ extension LensM {
   }
 }
 
-extension PrismM {
+public extension PrismM {
   func toAffine() -> AffineM<S, T, A, B> {
     AffineM<S, T, A, B>(extract: extract, inject: constant >>> self.tryModify)
   }
@@ -68,77 +68,77 @@ extension PrismM {
 
 // MARK: - Operators
 
-func *^? <S, T, A, B>(
+public func *^? <S, T, A, B>(
   root: S,
   affine: AffineM<S, T, A, B>
 ) -> A? {
   affine.extract(from: root)
 }
 
-func *<? <S, T, A, B>(
+public func *<? <S, T, A, B>(
   affine: AffineM<S, T, A, B>,
   value: B
 ) -> (S) -> T? {
   affine.inject(value)
 }
 
-func *~? <S, T, A, B>(
+public func *~? <S, T, A, B>(
   affine: AffineM<S, T, A, B>,
   f: @escaping (A) -> B
 ) -> (S) -> T? {
   affine.tryModify(f)
 }
 
-func ** <S, T, A, B, C, D>(
+public func ** <S, T, A, B, C, D>(
   left: AffineM<S, T, A, B>,
   right: AffineM<A, B, C ,D>
 ) -> AffineM<S, T, C, D> {
   left.appending(right)
 }
 
-func ** <S, T, A, B, C, D>(
+public func ** <S, T, A, B, C, D>(
   lens: LensM<S, T, A, B>,
   affine: AffineM<A, B, C ,D>
 ) -> AffineM<S, T, C, D> {
   lens.appending(affine)
 }
 
-func ** <Root, Value, AppendedValue>(
+public func ** <Root, Value, AppendedValue>(
   writableKeyPath: WritableKeyPath<Root, Value>,
   affine: Affine<Value, AppendedValue>
 ) -> Affine<Root, AppendedValue> {
   writableKeyPath.lens().appending(affine)
 }
 
-func ** <S, T, A, B, C, D>(
+public func ** <S, T, A, B, C, D>(
   lens: LensM<S, T, A, B>,
   prism: PrismM<A, B, C ,D>
 ) -> AffineM<S, T, C, D> {
   lens.appending(prism)
 }
 
-func ** <Root, Value, AppendedValue>(
+public func ** <Root, Value, AppendedValue>(
   writableKeyPath: WritableKeyPath<Root, Value>,
   prism: Prism<Value, AppendedValue>
 ) -> Affine<Root, AppendedValue> {
   writableKeyPath.lens().appending(prism)
 }
 
-func ** <S, T, A, B, C, D>(
+public func ** <S, T, A, B, C, D>(
   prism: PrismM<S, T, A, B>,
   affine: AffineM<A, B, C ,D>
 ) -> AffineM<S, T, C, D> {
   prism.appending(affine)
 }
 
-func ** <S, T, A, B, C, D>(
+public func ** <S, T, A, B, C, D>(
   prism: PrismM<S, T, A, B>,
   lens: LensM<A, B, C ,D>
 ) -> AffineM<S, T, C, D> {
   prism.appending(lens)
 }
 
-func ** <Root, Value, AppendedValue>(
+public func ** <Root, Value, AppendedValue>(
   prism: Prism<Root, Value>,
   writableKeyPath: WritableKeyPath<Value, AppendedValue>
 ) -> Affine<Root, AppendedValue> {
