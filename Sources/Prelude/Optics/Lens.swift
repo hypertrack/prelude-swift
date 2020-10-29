@@ -63,6 +63,32 @@ public func ** <S, T, A, B, C, D> (
   left.appending(right)
 }
 
+// MARK: - Types
+
+public extension Lens where S == T, A == B, Value == Void {
+  static func void() -> Lens<Root, Void> {
+    Lens(
+      get: constant(()),
+      set: constant(identity)
+    )
+  }
+}
+
+public extension Dictionary {
+  static func lens(at key: Key) -> Lens<Dictionary, Value?> {
+    .init(
+      get: { $0[key] },
+      set: { value in
+        { root in
+          var dictionary = root
+          dictionary[key] = value
+          return dictionary
+        }
+      }
+    )
+  }
+}
+
 // MARK: - Laws
 
 public enum LensLaw {
