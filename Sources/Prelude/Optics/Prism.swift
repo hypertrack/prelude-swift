@@ -2,13 +2,13 @@ public struct PrismM<S, T, A, B> {
   private let _extract: (S) -> A?
   private let _embed: (B) -> T
   
-  init(extract: @escaping (S) -> A?, embed: @escaping (B) -> T) {
+  public init(extract: @escaping (S) -> A?, embed: @escaping (B) -> T) {
     self._extract = extract
     self._embed = embed
   }
   
-  func extract(from root: S) -> A? { _extract(root) }
-  func embed(_ value: B) -> T { _embed(value) }
+  public func extract(from root: S) -> A? { _extract(root) }
+  public func embed(_ value: B) -> T { _embed(value) }
 }
 
 public typealias Prism<Root, Value> = PrismM<Root, Root, Value, Value>
