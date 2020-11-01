@@ -230,38 +230,17 @@ public func extend<E, A, B>(_ ef: @escaping (Either<E, A>) -> B) -> (Either<E, A
   }
 }
 
-// MARK: - Eq/Equatable
-extension Either: Equatable where L: Equatable, R: Equatable {
-  public static func == (lhs: Either, rhs: Either) -> Bool {
-    switch (lhs, rhs) {
-    case let (.left(lhs), .left(rhs)):
-      return lhs == rhs
-    case let (.right(lhs), .right(rhs)):
-      return lhs == rhs
-    default:
-      return false
-    }
-  }
-}
+// MARK: - Equatable
 
-// MARK: - Ord/Comparable
-extension Either: Comparable where L: Comparable, R: Comparable {
-  public static func < (lhs: Either, rhs: Either) -> Bool {
-    switch (lhs, rhs) {
-    case let (.left(lhs), .left(rhs)):
-      return lhs < rhs
-    case let (.right(lhs), .right(rhs)):
-      return lhs < rhs
-    case (.left, .right):
-      return true
-    case (.right, .left):
-      return false
-    }
-  }
-}
+extension Either: Equatable where L: Equatable, R: Equatable {}
+
+// MARK: - Comparable
+
+extension Either: Comparable where L: Comparable, R: Comparable {}
 
 // MARK: - Codable
-extension Either: Decodable where L: Decodable, R: Decodable {
+
+extension Either: Codable where L: Codable, R: Codable {
   public init(from decoder: Decoder) throws {
     do {
       self = try .right(.init(from: decoder))
@@ -269,9 +248,7 @@ extension Either: Decodable where L: Decodable, R: Decodable {
       self = try .left(.init(from: decoder))
     }
   }
-}
-
-extension Either: Encodable where L: Encodable, R: Encodable {
+  
   public func encode(to encoder: Encoder) throws {
     switch self {
     case let .left(l):
@@ -281,3 +258,11 @@ extension Either: Encodable where L: Encodable, R: Encodable {
     }
   }
 }
+
+// MARK: - Error
+
+extension Either: Error where L: Error {}
+
+// MARK: - Hashable
+
+extension Either: Hashable where L: Hashable, R: Hashable {}
