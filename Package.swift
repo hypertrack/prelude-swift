@@ -14,7 +14,7 @@ let package = Package(
   targets: [
     .target(
       name: "Prelude",
-      dependencies: []
+      exclude: ["Templates"]
     ),
     .testTarget(
       name: "PreludeTests",
