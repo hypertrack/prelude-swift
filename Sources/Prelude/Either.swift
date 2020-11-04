@@ -169,7 +169,7 @@ public func flatMap<E, A, B>(_ m: Either<E, A>) -> (@escaping (A) -> Either<E, B
 }
 
 // sourcery:inline:Either.Bind
-public func >>= <E, A, B>(m: Either<E, A>, a2mb: @escaping (A) -> Either<E, B>) -> Either<E, B> {
+public func >>- <E, A, B>(m: Either<E, A>, a2mb: @escaping (A) -> Either<E, B>) -> Either<E, B> {
   flatMap(m)(a2mb)
 }
 
@@ -177,19 +177,19 @@ public func flatMapFlipped<E, A, B>(_ a2m: @escaping (A) -> Either<E, B>) -> (Ei
   flip(flatMap)(a2m)
 }
 
-public func =<< <E, A, B>(a2m: @escaping (A) -> Either<E, B>, m: Either<E, A>) -> Either<E, B> {
-  m >>= a2m
+public func -<< <E, A, B>(a2m: @escaping (A) -> Either<E, B>, m: Either<E, A>) -> Either<E, B> {
+  m >>- a2m
 }
 
 public func join<E, A>(mm: Either<E, Either<E, A>>) -> Either<E, A> {
-  mm >>= identity
+  mm >>- identity
 }
 
 public func composeKleisli<E, A, B, C>(_ a2b: @escaping (A) -> Either<E, B>) -> (@escaping (B) -> Either<E, C>) -> (A) -> Either<E, C> {
-  { b2c in { a in a2b(a) >>= b2c } }
+  { b2c in { a in a2b(a) >>- b2c } }
 }
 
-public func >=> <E, A, B, C>(a2b: @escaping (A) -> Either<E, B>, b2c: @escaping (B) -> Either<E, C>) -> (A) -> Either<E, C> {
+public func >-> <E, A, B, C>(a2b: @escaping (A) -> Either<E, B>, b2c: @escaping (B) -> Either<E, C>) -> (A) -> Either<E, C> {
   composeKleisli(a2b)(b2c)
 }
 
@@ -197,12 +197,12 @@ public func composeKleisliFlipped<E, A, B, C>(_ b2c: @escaping (B) -> Either<E, 
   flip(composeKleisli)(b2c)
 }
 
-public func <=< <E, A, B, C>(b2c: @escaping (B) -> Either<E, C>, a2b: @escaping (A) -> Either<E, B>) -> (A) -> Either<E, C> {
+public func <-< <E, A, B, C>(b2c: @escaping (B) -> Either<E, C>, a2b: @escaping (A) -> Either<E, B>) -> (A) -> Either<E, C> {
   composeKleisliFlipped(b2c)(a2b)
 }
 
 public func ifM<E, A>(_ cond: Either<E, Bool>) -> (Either<E, A>) -> (Either<E, A>) -> Either<E, A> {
-  { t in { f in cond >>= { $0 ? t : f } } }
+  { t in { f in cond >>- { $0 ? t : f } } }
 }
 // sourcery:end
 
@@ -211,11 +211,11 @@ public func ifM<E, A>(_ cond: Either<E, Bool>) -> (Either<E, A>) -> (Either<E, A
 
 // sourcery:inline:Either.Monad
 public func whenM<E>(_ mb: Either<E, Bool>) -> (Either<E, Unit>) ->  Either<E, Unit> {
-  { m in mb >>= { b in when(b)(m) } }
+  { m in mb >>- { b in when(b)(m) } }
 }
 
 public func unlessM<E>(_ mb: Either<E, Bool>) -> (Either<E, Unit>) ->  Either<E, Unit> {
-  { m in mb >>= { b in unless(b)(m) } }
+  { m in mb >>- { b in unless(b)(m) } }
 }
 // sourcery:end
 

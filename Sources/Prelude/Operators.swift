@@ -61,12 +61,12 @@ infix operator *> : infixl4
 infix operator <|> : infixl3
 
 // Bind
-infix operator >>= : infixl1
-infix operator =<< : infixr1
+infix operator >>- : infixl1
+infix operator -<< : infixr1
 
 // Kleisli
-infix operator >=> : infixr1
-infix operator <=< : infixr1
+infix operator >-> : infixr1
+infix operator <-< : infixr1
 
 // Selective
 infix operator <*? : infixl4

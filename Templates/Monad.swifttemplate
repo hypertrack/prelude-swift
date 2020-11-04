@@ -7,11 +7,11 @@
 -%>
 // sourcery:inline:<%= type.name %>.Monad
 public func whenM<%= g("") %>(_ mb: <%= type.name %><%= g("Bool") %>) -> (<%= type.name %><%= g("Unit") %>) ->  <%= type.name %><%= g("Unit") %> {
-  { m in mb >>= { b in when(b)(m) } }
+  { m in mb >>- { b in when(b)(m) } }
 }
 
 public func unlessM<%= g("") %>(_ mb: <%= type.name %><%= g("Bool") %>) -> (<%= type.name %><%= g("Unit") %>) ->  <%= type.name %><%= g("Unit") %> {
-  { m in mb >>= { b in unless(b)(m) } }
+  { m in mb >>- { b in unless(b)(m) } }
 }
 // sourcery:end
 <% } -%>

@@ -28,10 +28,10 @@ public extension AffineM {
   
   func appending<C, D>(_ affine: AffineM<A, B, C, D>) -> AffineM<S, T, C, D> {
     AffineM<S, T, C, D>(
-      extract: extract >=> affine.extract,
+      extract: extract >-> affine.extract,
       inject: { d in
                 { s in
-                  (extract(from: s) >>= affine.inject(d)) >>= { b in self.inject(b)(s) }
+                  (extract(from: s) >>- affine.inject(d)) >>- { b in self.inject(b)(s) }
                 }
               }
     )

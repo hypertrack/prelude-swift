@@ -6,7 +6,7 @@
     let g = generic(type)
 -%>
 // sourcery:inline:<%= type.name %>.Bind
-public func >>= <%= g("A, B") %>(m: <%= type.name %><%= g("A") %>, a2mb: @escaping (A) -> <%= type.name %><%= g("B") %>) -> <%= type.name %><%= g("B") %> {
+public func >>- <%= g("A, B") %>(m: <%= type.name %><%= g("A") %>, a2mb: @escaping (A) -> <%= type.name %><%= g("B") %>) -> <%= type.name %><%= g("B") %> {
   flatMap(m)(a2mb)
 }
 
@@ -14,19 +14,19 @@ public func flatMapFlipped<%= g("A, B") %>(_ a2m: @escaping (A) -> <%= type.name
   flip(flatMap)(a2m)
 }
 
-public func =<< <%= g("A, B") %>(a2m: @escaping (A) -> <%= type.name %><%= g("B") %>, m: <%= type.name %><%= g("A") %>) -> <%= type.name %><%= g("B") %> {
-  m >>= a2m
+public func -<< <%= g("A, B") %>(a2m: @escaping (A) -> <%= type.name %><%= g("B") %>, m: <%= type.name %><%= g("A") %>) -> <%= type.name %><%= g("B") %> {
+  m >>- a2m
 }
 
 public func join<%= g("A") %>(mm: <%= type.name %><%= g(type.name + g("A")) %>) -> <%= type.name %><%= g("A") %> {
-  mm >>= identity
+  mm >>- identity
 }
 
 public func composeKleisli<%= g("A, B, C") %>(_ a2b: @escaping (A) -> <%= type.name %><%= g("B") %>) -> (@escaping (B) -> <%= type.name %><%= g("C") %>) -> (A) -> <%= type.name %><%= g("C") %> {
-  { b2c in { a in a2b(a) >>= b2c } }
+  { b2c in { a in a2b(a) >>- b2c } }
 }
 
-public func >=> <%= g("A, B, C") %>(a2b: @escaping (A) -> <%= type.name %><%= g("B") %>, b2c: @escaping (B) -> <%= type.name %><%= g("C") %>) -> (A) -> <%= type.name %><%= g("C") %> {
+public func >-> <%= g("A, B, C") %>(a2b: @escaping (A) -> <%= type.name %><%= g("B") %>, b2c: @escaping (B) -> <%= type.name %><%= g("C") %>) -> (A) -> <%= type.name %><%= g("C") %> {
   composeKleisli(a2b)(b2c)
 }
 
@@ -34,12 +34,12 @@ public func composeKleisliFlipped<%= g("A, B, C") %>(_ b2c: @escaping (B) -> <%=
   flip(composeKleisli)(b2c)
 }
 
-public func <=< <%= g("A, B, C") %>(b2c: @escaping (B) -> <%= type.name %><%= g("C") %>, a2b: @escaping (A) -> <%= type.name %><%= g("B") %>) -> (A) -> <%= type.name %><%= g("C") %> {
+public func <-< <%= g("A, B, C") %>(b2c: @escaping (B) -> <%= type.name %><%= g("C") %>, a2b: @escaping (A) -> <%= type.name %><%= g("B") %>) -> (A) -> <%= type.name %><%= g("C") %> {
   composeKleisliFlipped(b2c)(a2b)
 }
 
 public func ifM<%= g("A") %>(_ cond: <%= type.name %><%= g("Bool") %>) -> (<%= type.name %><%= g("A") %>) -> (<%= type.name %><%= g("A") %>) -> <%= type.name %><%= g("A") %> {
-  { t in { f in cond >>= { $0 ? t : f } } }
+  { t in { f in cond >>- { $0 ? t : f } } }
 }
 // sourcery:end
 <% } -%>

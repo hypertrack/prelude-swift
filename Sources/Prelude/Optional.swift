@@ -142,7 +142,7 @@ public func flatMap<A, B>(_ m: Optional<A>) -> ((A) -> Optional<B>) -> Optional<
 }
 
 // sourcery:inline:Optional.Bind
-public func >>= <A, B>(m: Optional<A>, a2mb: @escaping (A) -> Optional<B>) -> Optional<B> {
+public func >>- <A, B>(m: Optional<A>, a2mb: @escaping (A) -> Optional<B>) -> Optional<B> {
   flatMap(m)(a2mb)
 }
 
@@ -150,19 +150,19 @@ public func flatMapFlipped<A, B>(_ a2m: @escaping (A) -> Optional<B>) -> (Option
   flip(flatMap)(a2m)
 }
 
-public func =<< <A, B>(a2m: @escaping (A) -> Optional<B>, m: Optional<A>) -> Optional<B> {
-  m >>= a2m
+public func -<< <A, B>(a2m: @escaping (A) -> Optional<B>, m: Optional<A>) -> Optional<B> {
+  m >>- a2m
 }
 
 public func join<A>(mm: Optional<Optional<A>>) -> Optional<A> {
-  mm >>= identity
+  mm >>- identity
 }
 
 public func composeKleisli<A, B, C>(_ a2b: @escaping (A) -> Optional<B>) -> (@escaping (B) -> Optional<C>) -> (A) -> Optional<C> {
-  { b2c in { a in a2b(a) >>= b2c } }
+  { b2c in { a in a2b(a) >>- b2c } }
 }
 
-public func >=> <A, B, C>(a2b: @escaping (A) -> Optional<B>, b2c: @escaping (B) -> Optional<C>) -> (A) -> Optional<C> {
+public func >-> <A, B, C>(a2b: @escaping (A) -> Optional<B>, b2c: @escaping (B) -> Optional<C>) -> (A) -> Optional<C> {
   composeKleisli(a2b)(b2c)
 }
 
@@ -170,12 +170,12 @@ public func composeKleisliFlipped<A, B, C>(_ b2c: @escaping (B) -> Optional<C>) 
   flip(composeKleisli)(b2c)
 }
 
-public func <=< <A, B, C>(b2c: @escaping (B) -> Optional<C>, a2b: @escaping (A) -> Optional<B>) -> (A) -> Optional<C> {
+public func <-< <A, B, C>(b2c: @escaping (B) -> Optional<C>, a2b: @escaping (A) -> Optional<B>) -> (A) -> Optional<C> {
   composeKleisliFlipped(b2c)(a2b)
 }
 
 public func ifM<A>(_ cond: Optional<Bool>) -> (Optional<A>) -> (Optional<A>) -> Optional<A> {
-  { t in { f in cond >>= { $0 ? t : f } } }
+  { t in { f in cond >>- { $0 ? t : f } } }
 }
 // sourcery:end
 
@@ -183,10 +183,10 @@ public func ifM<A>(_ cond: Optional<Bool>) -> (Optional<A>) -> (Optional<A>) -> 
 
 // sourcery:inline:Optional.Monad
 public func whenM(_ mb: Optional<Bool>) -> (Optional<Unit>) ->  Optional<Unit> {
-  { m in mb >>= { b in when(b)(m) } }
+  { m in mb >>- { b in when(b)(m) } }
 }
 
 public func unlessM(_ mb: Optional<Bool>) -> (Optional<Unit>) ->  Optional<Unit> {
-  { m in mb >>= { b in unless(b)(m) } }
+  { m in mb >>- { b in unless(b)(m) } }
 }
 // sourcery:end

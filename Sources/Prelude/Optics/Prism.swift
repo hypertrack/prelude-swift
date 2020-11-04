@@ -25,7 +25,7 @@ public extension PrismM {
   
   func appending<C, D>(_ prism: PrismM<A, B, C, D>) -> PrismM<S, T, C, D> {
     PrismM<S, T, C, D>(
-      extract: extract >=> prism.extract,
+      extract: extract >-> prism.extract,
       embed: prism.embed >>> embed
     )
   }
