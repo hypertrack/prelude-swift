@@ -16,7 +16,7 @@ public func optional<Wrapped, A>(_ a: A) -> (@escaping (Wrapped) -> A) -> (Optio
 // MARK: Functor
 
 public func map<A, B>(_ f: @escaping (A) -> B) -> (Optional<A>) -> Optional<B> {
-  { o in o.map(f) }
+  { m in m.map(f) }
 }
 
 // sourcery:inline:Optional.Functor
