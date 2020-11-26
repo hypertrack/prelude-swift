@@ -4,6 +4,85 @@ public enum These<A, B> {
   case both(A, B)
 }
 
+public func these<A, B, C>(
+  _ l: @escaping (A) -> C
+) -> (@escaping (B) -> C) -> (@escaping (A) -> (B) -> C) -> (These<A, B>) -> C {
+  { r in
+    { lr in
+      { t in
+        switch t {
+        case let .this(a):    return l(a)
+        case let .that(b):    return r(b)
+        case let .both(a, b): return lr(a)(b)
+        }
+      }
+    }
+  }
+}
+
+public func thisOrBoth<A, B>(
+  _ a: A
+) -> (B?) -> These<A, B> {
+  { b in
+    switch b {
+    case .none:        return .this(a)
+    case let .some(b): return .both(a, b)
+    }
+  }
+}
+
+public func thatOrBoth<A, B>(
+  _ b: B
+) -> (A?) -> These<A, B> {
+  { a in
+    switch a {
+    case .none:        return .that(b)
+    case let .some(a): return .both(a, b)
+    }
+  }
+}
+
+public func maybeThese<A, B>(
+  _ a: A?
+) -> (B?) -> These<A, B>? {
+  { b in
+    switch (a, b) {
+    case     (.none,    .none):    return nil
+    case let (.some(a), .none):    return .this(a)
+    case let (.none,    .some(b)): return .that(b)
+    case let (.some(a), .some(b)): return .both(a, b)
+    }
+  }
+}
+
+public func fromThese<A, B>(
+  _ a: A
+) -> (B) -> (These<A, B>) -> (A, B) {
+  { b in
+    { t in
+      switch t {
+      case let .this(a):    return (a, b)
+      case let .that(b):    return (a, b)
+      case let .both(a, b): return (a, b)
+      }
+    }
+  }
+}
+
+public func theseLeft<A, B>(_ t: These<A, B>) -> A? {
+  switch t {
+  case .that:                         return nil
+  case let .this(a), let .both(a, _): return a
+  }
+}
+
+public func theseRight<A, B>(_ t: These<A, B>) -> B? {
+  switch t {
+  case .this:                         return nil
+  case let .that(b), let .both(_, b): return b
+  }
+}
+
 // MARK: - Equatable
 
 extension These: Equatable where A: Equatable, B: Equatable {}
