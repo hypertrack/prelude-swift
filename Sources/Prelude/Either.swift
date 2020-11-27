@@ -30,7 +30,11 @@ public func note<A, B>(_ a: (A)) -> (Optional<B>) -> Either<A, B> {
   optional(.left(a))(Either.right)
 }
 
-public func hush<L, R>(_ e: Either<L, R>) -> Optional<R> {
+public func eitherLeft<L, R>(_ e: Either<L, R>) -> L? {
+  e |> either(Optional.some)(constant(.none))
+}
+
+public func eitherRight<L, R>(_ e: Either<L, R>) -> R? {
   e |> either(constant(.none))(Optional.some)
 }
 

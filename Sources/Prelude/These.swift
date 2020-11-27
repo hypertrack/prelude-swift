@@ -83,6 +83,42 @@ public func theseRight<A, B>(_ t: These<A, B>) -> B? {
   }
 }
 
+public func addThis<A, B>(_ a: A) -> (These<A, B>) -> These<A, B> {
+  { t in
+    switch t {
+    case     .this:       return .this(a)
+    case let .that(b):    return .both(a, b)
+    case let .both(_, b): return .both(a, b)
+    }
+  }
+}
+
+public func addThat<A, B>(_ b: B) -> (These<A, B>) -> These<A, B> {
+  { t in
+    switch t {
+    case let .this(a):    return .both(a, b)
+    case     .that:       return .that(b)
+    case let .both(a, _): return .both(a, b)
+    }
+  }
+}
+
+public func removeThis<A, B>(_ t: These<A, B>) -> These<A, B>? {
+  switch t {
+  case     .this:       return nil
+  case     .that:       return t
+  case let .both(_, b): return .that(b)
+  }
+}
+
+public func removeThat<A, B>(_ t: These<A, B>) -> These<A, B>? {
+  switch t {
+  case     .this:       return t
+  case     .that:       return nil
+  case let .both(a, _): return .this(a)
+  }
+}
+
 // MARK: - Equatable
 
 extension These: Equatable where A: Equatable, B: Equatable {}
